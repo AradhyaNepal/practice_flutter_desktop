@@ -3,6 +3,16 @@
 #include <optional>
 
 #include "flutter/generated_plugin_registrant.h"
+#include <flutter/event_channel.h>
+#include <flutter/event_sink.h>
+#include <flutter/event_stream_handler_functions.h>
+#include <flutter/method_channel.h>
+#include <flutter/standard_method_codec.h>
+#include <windows.h>
+
+#include <memory>
+#include <iostream>
+#include <Windows.h>
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
@@ -25,14 +35,36 @@ bool FlutterWindow::OnCreate() {
     return false;
   }
   RegisterPlugins(flutter_controller_->engine());
+
+
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 
   flutter_controller_->engine()->SetNextFrameCallback([&]() {
     this->Show();
   });
 
+  flutter::MethodChannel<> channel(
+      flutter_controller_->engine()->messenger(), "disable_keyboard",
+      &flutter::StandardMethodCodec::GetInstance());
+  channel.SetMethodCallHandler(
+      [](const flutter::MethodCall<>& call,
+         std::unique_ptr<flutter::MethodResult<>> result) {
+          if (call.method_name().compare("disable") == 0) {
+                    BlockInput(TRUE);
+                    result->Success("Successfully Disabled");
+                }
+                else if (call.method_name().compare("enable") == 0) {
+                        BlockInput(FALSE);
+                      result->Success("Successfully Enabled");
+
+                }
+                else {
+                    result->NotImplemented();
+                }
+      });
   return true;
 }
+
 
 void FlutterWindow::OnDestroy() {
   if (flutter_controller_) {

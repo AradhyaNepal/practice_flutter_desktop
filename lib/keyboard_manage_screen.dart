@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:practice_flutter_desktop/keyboard_manager.dart';
 
 class DisableKeyboard extends StatefulWidget {
   const DisableKeyboard({super.key});
@@ -8,8 +9,9 @@ class DisableKeyboard extends StatefulWidget {
   State<DisableKeyboard> createState() => _DisableKeyboardState();
 }
 
-class _DisableKeyboardState extends State<DisableKeyboard>  with SingleTickerProviderStateMixin{
-  bool isChecked = false;
+class _DisableKeyboardState extends State<DisableKeyboard>
+    with SingleTickerProviderStateMixin {
+  bool disabledIsChecked = false;
   final _textEditingController = TextEditingController();
 
   late final AnimationController _animationController;
@@ -47,7 +49,7 @@ class _DisableKeyboardState extends State<DisableKeyboard>  with SingleTickerPro
 
   @override
   Widget build(BuildContext context) {
-    final style= isChecked?GoogleFonts.candal():GoogleFonts.amaranth();
+    final style = disabledIsChecked ? GoogleFonts.candal() : GoogleFonts.amaranth();
     final size = MediaQuery.of(context).size;
     return Scaffold(
         body: Center(
@@ -69,7 +71,7 @@ class _DisableKeyboardState extends State<DisableKeyboard>  with SingleTickerPro
               ).createShader(bounds);
             },
             child: Text(
-              isChecked?"You can't use keyboard":"You can use keyboard",
+              disabledIsChecked ? "You can't use keyboard" : "You can use keyboard",
               textAlign: TextAlign.center,
               style: style.copyWith(
                 color: Colors.white,
@@ -89,7 +91,9 @@ class _DisableKeyboardState extends State<DisableKeyboard>  with SingleTickerPro
               ),
             ),
           ),
-          const SizedBox(height: 20,),
+          const SizedBox(
+            height: 20,
+          ),
           ShaderMask(
             shaderCallback: (Rect bounds) {
               return RadialGradient(
@@ -106,11 +110,11 @@ class _DisableKeyboardState extends State<DisableKeyboard>  with SingleTickerPro
             },
             child: Switch(
               activeColor: Colors.blue,
-              value: isChecked,
-              onChanged: (value) {
-                setState(() {
-                  isChecked = value;
-                });
+              value: disabledIsChecked,
+              onChanged: (value) async {
+                disabledIsChecked = value;
+                await KeyboardManager.blockInput(disabledIsChecked);
+                setState(() {});
               },
             ),
           ),
@@ -118,6 +122,7 @@ class _DisableKeyboardState extends State<DisableKeyboard>  with SingleTickerPro
       ),
     ));
   }
+
 
   @override
   void dispose() {
