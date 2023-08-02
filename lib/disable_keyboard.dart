@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class DisableKeyboard extends StatefulWidget {
   const DisableKeyboard({super.key});
@@ -46,6 +47,7 @@ class _DisableKeyboardState extends State<DisableKeyboard>  with SingleTickerPro
 
   @override
   Widget build(BuildContext context) {
+    final style= isChecked?GoogleFonts.candal():GoogleFonts.amaranth();
     final size = MediaQuery.of(context).size;
     return Scaffold(
         body: Center(
@@ -69,7 +71,7 @@ class _DisableKeyboardState extends State<DisableKeyboard>  with SingleTickerPro
             child: Text(
               isChecked?"You can't use keyboard":"You can use keyboard",
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: style.copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 100,
