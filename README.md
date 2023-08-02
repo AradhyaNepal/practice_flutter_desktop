@@ -1,16 +1,6 @@
 # practice_flutter_desktop
 
-A new Flutter project.
+### Setup Zip: [Touch Me!!](https://drive.google.com/file/d/1A--ZWX3f_tUJfa7qCYbMYQCGTDK3uHzj/view?usp=sharing)
 
-## Getting Started
+![image](https://github.com/AradhyaNepal/practice_flutter_desktop/assets/66102711/ed645ea7-e624-4454-9d4b-1dfc11b45afd)
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
