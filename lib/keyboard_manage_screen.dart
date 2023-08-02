@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:practice_flutter_desktop/keyboard_manager.dart';
@@ -21,6 +23,9 @@ class _DisableKeyboardState extends State<DisableKeyboard>
 
   Color get colorTwo => _colorTwo.value ?? Colors.white;
   late final Animation<Color?> _colorTwo;
+
+  Timer? _timer;
+  final ValueNotifier<int> _timerSeconds=ValueNotifier(0);
 
   @override
   void initState() {
@@ -49,7 +54,7 @@ class _DisableKeyboardState extends State<DisableKeyboard>
 
   @override
   Widget build(BuildContext context) {
-    final style = disabledIsChecked ? GoogleFonts.candal() : GoogleFonts.amaranth();
+    final style = disabledIsChecked ? GoogleFonts.amaranth():GoogleFonts.candal();
     final size = MediaQuery.of(context).size;
     return Scaffold(
         body: Center(
@@ -70,14 +75,20 @@ class _DisableKeyboardState extends State<DisableKeyboard>
                 tileMode: TileMode.mirror,
               ).createShader(bounds);
             },
-            child: Text(
-              disabledIsChecked ? "You can't use keyboard" : "You can use keyboard",
-              textAlign: TextAlign.center,
-              style: style.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 100,
-              ),
+            child: ValueListenableBuilder(
+              valueListenable: _timerSeconds,
+              builder: (context,value,child) {
+                final seconds="$value secs";
+                return Text(
+                  disabledIsChecked ? "You can't use keyboard \n$seconds" : "You can use keyboard",
+                  textAlign: TextAlign.center,
+                  style: style.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 100,
+                  ),
+                );
+              }
             ),
           ),
           Padding(
@@ -114,6 +125,7 @@ class _DisableKeyboardState extends State<DisableKeyboard>
               onChanged: (value) async {
                 disabledIsChecked = value;
                 await KeyboardManager.blockInput(disabledIsChecked);
+                autoEnable(disabledIsChecked);
                 setState(() {});
               },
             ),
@@ -123,11 +135,29 @@ class _DisableKeyboardState extends State<DisableKeyboard>
     ));
   }
 
+  void autoEnable(bool disableIsChecked){
+    if(disabledIsChecked){
+      _timerSeconds.value=30;
+      _timer=Timer.periodic(const Duration(seconds: 1), (value) async{
+        _timerSeconds.value=_timerSeconds.value-1;
+        if(_timerSeconds.value<=0){
+          await KeyboardManager.blockInput(false);
+          disabledIsChecked=false;
+          _timer?.cancel();
+          setState(() {
+          });
+        }
+      });
+    }else{
+      _timer?.cancel();
+    }
+  }
 
   @override
   void dispose() {
     _textEditingController.dispose();
     _animationController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 }
